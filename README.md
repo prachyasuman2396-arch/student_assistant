@@ -2,50 +2,72 @@
 
 A production-oriented, ChatGPT-like pedagogical study and research assistant designed specifically for dental students (BDS, DMD/DDS, dental residents, and postgraduates).
 
-The system integrates LangGraph workflow orchestration, an intelligent dual-LLM architecture (Groq + Google Gemini), pgvector-backed semantic document RAG (using PyMuPDF), live scholarly biomedical research retrieval (NCBI PubMed & Europe PMC), and exam-oriented study tools (MCQs and flashcards).
+The system features a **Planner–Orchestrator–Multi-Agent Architecture with Persistent Memory** using LangGraph, an intelligent dual-LLM router (Groq + Google Gemini), pgvector-backed semantic document RAG (using PyMuPDF), live scholarly biomedical research retrieval (NCBI PubMed & Europe PMC), active-recall study tools (MCQs and flashcards), and three-tier persistent memory (short-term thread checkpointing, semantic profile preferences, and episodic learning events).
 
 ---
 
 ## 🏛️ System Architecture
 
 ```
-                                  ┌───────────────────────────┐
-                                  │   FastAPI Web Backend     │
-                                  │   (REST & SSE Streaming)  │
-                                  └─────────────┬─────────────┘
-                                                │
-                                  ┌─────────────▼─────────────┐
-                                  │     LangGraph Engine      │
-                                  └─────────────┬─────────────┘
-                                                │
-                        ┌───────────────────────┴───────────────────────┐
-                        │                                               │
-             ┌──────────▼──────────┐                         ┌──────────▼──────────┐
-             │    classify_query   │                         │  Dental Tutor Node  │
-             └──────────┬──────────┘                         │  (Plain language &  │
-                        │                                    │   mechanisms first) │
-          ┌─────────────┼─────────────┐                      └─────────────────────┘
-          │             │             │
-┌─────────▼──────┐┌─────▼──────┐┌─────▼────────┐
-│ document_      ││ web_       ││ study_tools  │
-│ retrieval      ││ research   ││ (MCQs/Cards) │
-│ (pgvector RAG) ││ (PubMed)   │└──────────────┘
-└─────────┬──────┘└─────┬──────┘
-          │             │
-          └──────┬──────┘
-                 ▼
-       ┌──────────────────┐
-       │ synthesize node  │
-       │ (with citations) │
-       └─────────┬────────┘
-                 ▼
-       ┌──────────────────┐
-       │  verify_answer   │
-       └─────────┬────────┘
-                 ▼
-       ┌──────────────────┐
-       │    save_turn     │
-       └──────────────────┘
+Student Query + Context
+          │
+          ▼
+┌────────────────────────────────────────────────────────┐
+│               1. Memory Retrieval Node                 │
+│  - Short-Term: Thread checkpoints & message window     │
+│  - Semantic: User preferences, learning goals (pgvector)│
+│  - Episodic: Relevant past quiz scores & struggles     │
+└─────────────────────────┬──────────────────────────────┘
+                          │
+                          ▼
+┌────────────────────────────────────────────────────────┐
+│                  2. Planner Agent                      │
+│  - Dynamic task decomposition using Pydantic schema    │
+│  - Determines workers, dependencies, parallelizability │
+│  - Direct execution bypass for trivial single-turn Qs  │
+└─────────────────────────┬──────────────────────────────┘
+                          │
+                          ▼
+┌────────────────────────────────────────────────────────┐
+│                 3. Plan Validator                      │
+│  - Validates DAG: cycle detection (Kahn's / DFS)       │
+│  - Validates registered workers & dependency IDs       │
+│  - Bounded retry loop (max 2 revisions) on invalid plan│
+└─────────────────────────┬──────────────────────────────┘
+                          │
+                          ▼
+┌────────────────────────────────────────────────────────┐
+│           4. Deterministic Orchestrator                │
+│  - Evaluates dependency readiness in execution state   │
+│  - Dispatches executable tasks concurrently in parallel │
+│  - Enforces concurrency limits, timeouts & retries     │
+└──────┬──────────────────┬───────────────────┬──────────┘
+       │                  │                   │
+       ▼ (Parallel)       ▼ (Parallel)        ▼ (Sequential / Dependent)
+┌──────────────┐   ┌──────────────┐   ┌──────────────┐
+│  RAG Worker  │   │Research Worker│  │ Tutor Worker │ ... (MCQ / Flashcard)
+└──────┬───────┘   └──────┬───────┘   └──────┬───────┘
+       │                  │                  │
+       └──────────────────┴──────────────────┘
+                          │
+                          ▼
+┌────────────────────────────────────────────────────────┐
+│              5. Result Aggregator Node                 │
+│  - Collects worker outputs (with state reducer)        │
+│  - Merges evidence dossier & citation metadata         │
+│  - Synthesizes final pedagogical response              │
+└─────────────────────────┬──────────────────────────────┘
+                          │
+                          ▼
+┌────────────────────────────────────────────────────────┐
+│                6. Memory Update Node                   │
+│  - Semantic Extractor: Discovers new goals/preferences │
+│  - Episodic Logger: Records study events & struggles   │
+│  - Strict tenant isolation & deduplication             │
+└─────────────────────────┬──────────────────────────────┘
+                          │
+                          ▼
+                     Final Answer
 ```
 
 ### Key Pillars

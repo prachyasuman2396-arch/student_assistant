@@ -4,6 +4,7 @@ from app.db.repositories.document_repo import DocumentRepository
 from app.db.repositories.study_repo import StudyRepository
 from app.db.repositories.profile_repo import ProfileRepository
 from app.db.repositories.memory_repo import MemoryRepository
+from app.db.repositories.episodic_repo import EpisodicRepository
 
 __all__ = [
     "UserRepository",
@@ -12,5 +13,6 @@ __all__ = [
     "StudyRepository",
     "ProfileRepository",
     "MemoryRepository",
+    "EpisodicRepository",
 ]
 

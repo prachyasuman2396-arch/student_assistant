@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from app.db.models.study import StudyCard
     from app.db.models.profile import UserProfile
     from app.db.models.memory import LongTermMemory
+    from app.db.models.episodic_memory import EpisodicMemory
 
 
 class User(Base, TimestampMixin):
@@ -38,4 +39,7 @@ class User(Base, TimestampMixin):
     )
     memories: Mapped[List["LongTermMemory"]] = relationship(
         "LongTermMemory", back_populates="user", cascade="all, delete-orphan"
+    )
+    episodic_memories: Mapped[List["EpisodicMemory"]] = relationship(
+        "EpisodicMemory", back_populates="user", cascade="all, delete-orphan"
     )

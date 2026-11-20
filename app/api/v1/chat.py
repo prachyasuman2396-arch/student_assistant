@@ -9,6 +9,10 @@ from app.db.session import get_db
 from app.db.repositories.conversation_repo import ConversationRepository
 from app.db.repositories.profile_repo import ProfileRepository
 from app.db.repositories.memory_repo import MemoryRepository
+from app.db.repositories.episodic_repo import EpisodicRepository
+from app.study.service import StudyService
+from app.graph.checkpoint import get_checkpointer
+from app.core.config import settings
 from app.api.dependencies import get_current_user
 from app.db.models.user import User
 from app.llm.router import LLMRouter
@@ -82,6 +86,8 @@ async def chat_endpoint(
     retriever_factory = lambda: HybridRetriever(session=session)
     profile_repo_factory = lambda: ProfileRepository(session)
     memory_repo_factory = lambda: MemoryRepository(session)
+    episodic_repo_factory = lambda: EpisodicRepository(session)
+    study_service_factory = lambda: StudyService(session, router=router_instance)
 
     nodes = DentalGraphNodes(
         router=router_instance,
@@ -89,6 +95,8 @@ async def chat_endpoint(
         retriever_factory=retriever_factory,
         profile_repo_factory=profile_repo_factory,
         memory_repo_factory=memory_repo_factory,
+        episodic_repo_factory=episodic_repo_factory,
+        study_service_factory=study_service_factory,
     )
 
     # 5. Handle True Real-Time SSE Streaming if requested
@@ -394,8 +402,10 @@ async def chat_endpoint(
             },
         )
 
-    # 6. Non-streaming LangGraph workflow
-    workflow = create_dental_graph(nodes)
+    # 6. Non-streaming LangGraph workflow with thread-based checkpointing
+    checkpointer = await get_checkpointer(settings.DATABASE_URL)
+    workflow = create_dental_graph(nodes, checkpointer=checkpointer)
+    thread_config = {"configurable": {"thread_id": conversation_id}}
 
     initial_state: AgentState = {
         "messages": history_messages,
@@ -410,7 +420,7 @@ async def chat_endpoint(
     }
 
     try:
-        final_state = await workflow.ainvoke(initial_state)
+        final_state = await workflow.ainvoke(initial_state, config=thread_config)
     except Exception as e:
         logger.error(f"Graph execution failed: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Assistant execution error: {str(e)}")

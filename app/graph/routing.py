@@ -1,7 +1,31 @@
 from typing import Literal
 from app.graph.state import AgentState
 
+MAX_PLAN_REVISIONS = 2
 
+
+def route_after_plan_validation(
+    state: AgentState,
+) -> Literal["orchestrator", "planner"]:
+    """
+    Routes after plan validation:
+    - If plan is valid: proceeds to orchestrator.
+    - If plan is invalid and revision attempts < MAX_PLAN_REVISIONS: loops back to planner with feedback.
+    - If plan is invalid and revisions exhausted: proceeds to orchestrator which applies safe fallback.
+    """
+    is_valid = state.get("plan_is_valid", False)
+    revisions = state.get("plan_revision_count", 0)
+
+    if is_valid:
+        return "orchestrator"
+
+    if revisions < MAX_PLAN_REVISIONS:
+        return "planner"
+
+    return "orchestrator"
+
+
+# Legacy routing preserved for backwards compatibility with tests
 def route_by_intent(
     state: AgentState,
 ) -> Literal["tutor", "web_research", "document_retrieval", "hybrid_retrieval", "study_tools"]:
@@ -14,10 +38,6 @@ def route_by_intent(
 def route_after_verification(
     state: AgentState,
 ) -> Literal["save_turn", "web_research"]:
-    """
-    If retrieval produced zero evidence and retry count is 0,
-    retry with fallback research once; otherwise conclude.
-    """
     evidence_sufficient = state.get("evidence_sufficient", True)
     retry_count = state.get("retry_count", 0)
     intent = state.get("intent", "tutor")

@@ -8,6 +8,7 @@ from app.db.models.research import ResearchSource
 from app.db.models.study import StudyCard
 from app.db.models.profile import UserProfile
 from app.db.models.memory import LongTermMemory
+from app.db.models.episodic_memory import EpisodicMemory
 
 __all__ = [
     "Base",
@@ -20,5 +21,6 @@ __all__ = [
     "StudyCard",
     "UserProfile",
     "LongTermMemory",
+    "EpisodicMemory",
 ]
 
