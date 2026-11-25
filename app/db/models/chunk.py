@@ -1,6 +1,7 @@
 import uuid
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any, Dict, List
 from sqlalchemy import String, ForeignKey, Integer, Text, JSON, Index
+from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from pgvector.sqlalchemy import Vector
 from app.db.base import Base, TimestampMixin
@@ -32,8 +33,20 @@ class DocumentChunk(Base, TimestampMixin):
     section_title: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     page_start: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     page_end: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    
-    # pgvector embedding column
+
+    # Multi-extractor & hybrid RAG columns
+    bbox: Mapped[Optional[List[float]]] = mapped_column(JSON, nullable=True)
+    chunk_type: Mapped[str] = mapped_column(String(32), default="text", nullable=False)
+    extractor: Mapped[str] = mapped_column(String(16), default="pymupdf", nullable=False)
+    content_tsv: Mapped[Optional[Any]] = mapped_column(TSVECTOR, nullable=True)
+    dense_embedding: Mapped[Optional[list]] = mapped_column(
+        Vector(settings.EMBED_DIMENSION), nullable=True
+    )
+    sparse_values: Mapped[Optional[Dict[str, float]]] = mapped_column(JSON, default=dict, nullable=True)
+    heading_path: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    extraction_meta: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, default=dict, nullable=True)
+
+    # Legacy 384-dim pgvector embedding column preserved for backward compatibility
     embedding: Mapped[Optional[list]] = mapped_column(
         Vector(settings.EMBEDDING_DIMENSION), nullable=True
     )
@@ -43,5 +56,6 @@ class DocumentChunk(Base, TimestampMixin):
 
     __table_args__ = (
         Index("ix_doc_chunk_user_doc", "user_id", "document_id"),
+        Index("ix_doc_chunk_user_doc_page", "user_id", "document_id", "page_number"),
         Index("ix_doc_chunks_parent_chunk_id", "parent_chunk_id"),
     )

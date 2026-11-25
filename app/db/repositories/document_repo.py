@@ -43,7 +43,7 @@ class DocumentRepository:
             and_(
                 Document.user_id == user_id,
                 Document.content_hash == content_hash,
-                Document.status == "completed",
+                Document.status.in_(["completed", "ready", "queued", "processing"]),
             )
         )
         result = await self.session.execute(stmt)
@@ -75,7 +75,10 @@ class DocumentRepository:
         document_id: str,
         status: str,
         page_count: Optional[int] = None,
+        chunk_count: Optional[int] = None,
         error_message: Optional[str] = None,
+        last_error: Optional[dict] = None,
+        triage_summary: Optional[dict] = None,
         content_hash: Optional[str] = None,
     ) -> Optional[Document]:
         stmt = select(Document).where(Document.id == document_id)
@@ -86,8 +89,14 @@ class DocumentRepository:
         doc.status = status
         if page_count is not None:
             doc.page_count = page_count
+        if chunk_count is not None:
+            doc.chunk_count = chunk_count
         if error_message is not None:
             doc.error_message = error_message
+        if last_error is not None:
+            doc.last_error = last_error
+        if triage_summary is not None:
+            doc.triage_summary = triage_summary
         if content_hash is not None:
             doc.content_hash = content_hash
         await self.session.commit()

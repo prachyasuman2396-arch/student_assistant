@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.core.config import settings
 from app.core.logging import logger
+from app.core.observability import configure_observability
 from app.api.v1 import api_v1_router, health_router
 from app.db.session import init_vector_extension
 
@@ -13,6 +14,7 @@ from app.db.session import init_vector_extension
 async def lifespan(app: FastAPI):
     # Startup actions
     logger.info(f"Starting {settings.APP_NAME} in {settings.ENVIRONMENT} mode...")
+    configure_observability()
     os.makedirs(settings.UPLOAD_STORAGE_DIR, exist_ok=True)
     await init_vector_extension()
     yield

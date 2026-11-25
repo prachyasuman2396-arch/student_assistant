@@ -3,6 +3,12 @@ from langgraph.checkpoint.base import BaseCheckpointSaver
 from app.graph.state import AgentState
 from app.graph.nodes import DentalGraphNodes
 from app.graph.routing import route_after_plan_validation, route_by_intent
+from app.core.observability import traceable
+
+
+def _named_node(fn, langsmith_run_name: str):
+    """Wrap a LangGraph node with a deterministic langsmith_run_name for readable trace trees."""
+    return traceable(name=langsmith_run_name, run_type="chain")(fn)
 
 
 def create_planner_orchestrator_graph(nodes: DentalGraphNodes, checkpointer: BaseCheckpointSaver = None):
@@ -16,13 +22,13 @@ def create_planner_orchestrator_graph(nodes: DentalGraphNodes, checkpointer: Bas
     """
     graph = StateGraph(AgentState)
 
-    # 1. Register Multi-Agent Pipeline Nodes
-    graph.add_node("memory_retrieval", nodes.retrieve_memories)
-    graph.add_node("planner", nodes.plan_query)
-    graph.add_node("plan_validator", nodes.validate_plan)
-    graph.add_node("orchestrator", nodes.orchestrate_tasks)
-    graph.add_node("result_aggregator", nodes.aggregate_results)
-    graph.add_node("memory_update", nodes.update_memories)
+    # 1. Register Multi-Agent Pipeline Nodes with explicit LangSmith run names
+    graph.add_node("memory_retrieval", _named_node(nodes.retrieve_memories, "node:memory_retrieval"))
+    graph.add_node("planner", _named_node(nodes.plan_query, "node:planner"))
+    graph.add_node("plan_validator", _named_node(nodes.validate_plan, "node:plan_validator"))
+    graph.add_node("orchestrator", _named_node(nodes.orchestrate_tasks, "node:orchestrator"))
+    graph.add_node("result_aggregator", _named_node(nodes.aggregate_results, "node:result_aggregator"))
+    graph.add_node("memory_update", _named_node(nodes.update_memories, "node:memory_update"))
 
     # 2. Sequential & Conditional Edges
     graph.add_edge(START, "memory_retrieval")

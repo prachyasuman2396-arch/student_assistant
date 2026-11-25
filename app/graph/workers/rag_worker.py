@@ -4,6 +4,8 @@ from typing import Dict, Any, Optional, Callable
 from app.graph.workers.base import BaseWorker
 from app.graph.state import Task, TaskResult, TaskStatus
 from app.core.logging import logger
+from app.core.observability import traceable
+from app.prompts.sanitizer import sanitize_untrusted_text
 
 
 class RAGWorker(BaseWorker):
@@ -19,6 +21,7 @@ class RAGWorker(BaseWorker):
     def name(self) -> str:
         return "rag"
 
+    @traceable(name="rag_worker_execute", run_type="retriever")
     async def execute(self, task: Task, context: Dict[str, Any]) -> TaskResult:
         start_time = time.perf_counter()
         query = task.input_mapping.get("query") or context.get("query") or task.description
@@ -93,24 +96,32 @@ class RAGWorker(BaseWorker):
             else:
                 chunks = []
 
-            serialized_chunks = [
-                c.model_dump() if hasattr(c, "model_dump") else (c if isinstance(c, dict) else vars(c))
-                for c in chunks
-            ]
+            serialized_chunks = []
+            for c in chunks:
+                d = c.model_dump() if hasattr(c, "model_dump") else (c if isinstance(c, dict) else vars(c))
+                d["content"] = sanitize_untrusted_text(d.get("content", ""))
+                if not d.get("citation_label"):
+                    ctype = d.get("chunk_type") or "text"
+                    d["citation_label"] = f"[{d.get('filename')}, p.{d.get('page_number')}, {ctype}]"
+                serialized_chunks.append(d)
 
             doc_citations = [
                 {
                     "filename": c.get("filename"),
                     "page_number": c.get("page_number"),
                     "chunk_id": c.get("chunk_id"),
+                    "chunk_type": c.get("chunk_type", "text"),
+                    "extractor": c.get("extractor", "pymupdf"),
+                    "heading_path": c.get("heading_path") or c.get("section_title"),
+                    "citation_label": c.get("citation_label"),
                     "similarity_score": c.get("similarity_score"),
                 }
                 for c in serialized_chunks
             ]
 
-            # Build text summary of evidence
+            # Build text summary of evidence with inline citation labels
             chunk_texts = [
-                f"Source [{c.get('filename')}, Page {c.get('page_number')}]:\n{c.get('content')}"
+                f"Source {c.get('citation_label')}:\n{c.get('content')}"
                 for c in serialized_chunks
             ]
             evidence_summary = "\n\n".join(chunk_texts) if chunk_texts else "No matching textbook passages found."

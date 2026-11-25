@@ -1,0 +1,26 @@
+name: RAG Evaluation & Test Suite
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run unit & fast tests
+        run: pytest -v -m "not slow and not integration"
+      - name: Run golden dataset evaluation
+        env:
+          LANGSMITH_TRACING: "false"
+        run: python -m evaluation.run_eval --dataset evaluation/dental_eval_dataset.json

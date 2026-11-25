@@ -1,74 +1,32 @@
 [
-  {
-    "id": "DENT-001",
-    "discipline": "Endodontics",
-    "topic": "Pulpal Diagnosis & Thermal Sensitivity",
-    "question": "What is the key pathophysiological difference between reversible pulpitis and symptomatic irreversible pulpitis regarding pain upon cold stimulus removal?",
-    "expected_answer_keywords": ["lingering pain", "A-delta fibers", "C-fibers", "vasodilation", "intrapulpal pressure"],
-    "requires_research": false,
-    "complexity": "medium"
-  },
-  {
-    "id": "DENT-002",
-    "discipline": "Endodontics",
-    "topic": "Irrigation Protocols",
-    "question": "Why is 17% EDTA used in combination with sodium hypochlorite (NaOCl) during root canal preparation, and what is its specific effect on the smear layer?",
-    "expected_answer_keywords": ["chelating agent", "inorganic component", "smear layer removal", "dentinal tubules", "erosion"],
-    "requires_research": false,
-    "complexity": "medium"
-  },
-  {
-    "id": "DENT-003",
-    "discipline": "Periodontology",
-    "topic": "Classification & Staging",
-    "question": "According to the 2018 AAP/EFP Classification, how is Periodontitis Stage III distinguished from Stage IV based on tooth loss and masticatory dysfunction?",
-    "expected_answer_keywords": ["tooth loss", "4 or fewer teeth", "5 or more teeth", "masticatory dysfunction", "bite collapse"],
-    "requires_research": true,
-    "complexity": "high"
-  },
-  {
-    "id": "DENT-004",
-    "discipline": "Dental Materials",
-    "topic": "Zirconia Bioceramics",
-    "question": "Explain the mechanism of 'transformation toughening' in 3Y-TZP zirconia ceramics when a microcrack propagates.",
-    "expected_answer_keywords": ["tetragonal to monoclinic", "volume expansion", "compressive stress", "crack tip", "arrest"],
-    "requires_research": false,
-    "complexity": "high"
-  },
-  {
-    "id": "DENT-005",
-    "discipline": "Pharmacology",
-    "topic": "Local Anesthetics",
-    "question": "How does tissue acidosis in an infected abscess reduce the efficacy of lidocaine, and what is the role of the uncharged base (RN)?",
-    "expected_answer_keywords": ["Henderson-Hasselbalch", "pKa", "lipid membrane", "uncharged base", "ionized cation"],
-    "requires_research": false,
-    "complexity": "medium"
-  },
-  {
-    "id": "DENT-006",
-    "discipline": "Orthodontics",
-    "topic": "Biomechanics of Tooth Movement",
-    "question": "Describe the cellular events on the pressure side versus the tension side of the periodontal ligament during orthodontic tooth movement.",
-    "expected_answer_keywords": ["osteoclasts", "osteoblasts", "hyalinization", "RANKL", "bone remodeling"],
-    "requires_research": false,
-    "complexity": "medium"
-  },
-  {
-    "id": "DENT-007",
-    "discipline": "Periodontology",
-    "topic": "Microbiology & Red Complex",
-    "question": "Which specific bacteria constitute Socransky's Red Complex in chronic periodontal disease, and what virulence factors do they express?",
-    "expected_answer_keywords": ["Porphyromonas gingivalis", "Tannerella forsythia", "Treponema denticola", "gingipains"],
-    "requires_research": true,
-    "complexity": "high"
-  },
-  {
-    "id": "DENT-008",
-    "discipline": "Operative Dentistry",
-    "topic": "Adhesive Dentistry & C-Factor",
-    "question": "What is the configuration factor (C-factor) in a Class I occlusal cavity preparation, and why does a high C-factor increase polymerisation shrinkage stress?",
-    "expected_answer_keywords": ["bonded to unbonded ratio", "5:1", "polymerization shrinkage", "debonding", "enamel margin"],
-    "requires_research": false,
-    "complexity": "medium"
-  }
+  {"id": "DENT-001", "discipline": "Endodontics", "topic": "Pulpal Diagnosis", "question": "What is the key pathophysiological difference between reversible pulpitis and symptomatic irreversible pulpitis regarding pain upon cold stimulus removal?", "expected_answer_keywords": ["lingering pain", "A-delta fibers", "C-fibers", "intrapulpal pressure"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-002", "discipline": "Endodontics", "topic": "Irrigation Protocols", "question": "Why is 17% EDTA used in combination with sodium hypochlorite (NaOCl) during root canal preparation, and what is its specific effect on the smear layer?", "expected_answer_keywords": ["chelating agent", "inorganic component", "smear layer"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-003", "discipline": "Periodontology", "topic": "Classification & Staging", "question": "According to the 2018 AAP/EFP Classification, how is Periodontitis Stage III distinguished from Stage IV based on tooth loss and masticatory dysfunction?", "expected_answer_keywords": ["4 or fewer teeth", "5 or more teeth", "masticatory dysfunction"], "expected_citation": "p.", "complexity": "high"},
+  {"id": "DENT-004", "discipline": "Dental Materials", "topic": "Zirconia Bioceramics", "question": "Explain the mechanism of transformation toughening in 3Y-TZP zirconia ceramics when a microcrack propagates.", "expected_answer_keywords": ["tetragonal to monoclinic", "volume expansion", "compressive stress"], "expected_citation": "p.", "complexity": "high"},
+  {"id": "DENT-005", "discipline": "Pharmacology", "topic": "Local Anesthetics", "question": "How does tissue acidosis in an infected abscess reduce the efficacy of lidocaine, and what is the role of the uncharged base?", "expected_answer_keywords": ["Henderson-Hasselbalch", "pKa", "uncharged base", "ionized cation"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-006", "discipline": "Orthodontics", "topic": "Biomechanics", "question": "Describe the cellular events on the pressure side versus the tension side of the periodontal ligament during orthodontic tooth movement.", "expected_answer_keywords": ["osteoclasts", "osteoblasts", "RANKL", "bone remodeling"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-007", "discipline": "Periodontology", "topic": "Microbiology", "question": "Which specific bacteria constitute Socransky's Red Complex in chronic periodontal disease, and what virulence factors do they express?", "expected_answer_keywords": ["Porphyromonas gingivalis", "Tannerella forsythia", "Treponema denticola", "gingipains"], "expected_citation": "p.", "complexity": "high"},
+  {"id": "DENT-008", "discipline": "Operative Dentistry", "topic": "C-Factor", "question": "What is the configuration factor (C-factor) in a Class I occlusal cavity preparation, and why does a high C-factor increase polymerization shrinkage stress?", "expected_answer_keywords": ["bonded to unbonded", "5:1", "polymerization shrinkage"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-009", "discipline": "Oral Pathology", "topic": "Odontogenic Cysts", "question": "What histological features distinguish an odontogenic keratocyst (OKC) from a dentigerous cyst?", "expected_answer_keywords": ["parakeratinized", "palisaded basal", "satellite cysts"], "expected_citation": "p.", "complexity": "high"},
+  {"id": "DENT-010", "discipline": "Oral Surgery", "topic": "Impacted Third Molars", "question": "What are the radiographic signs on a panoramic radiograph indicating close proximity of a mandibular third molar to the inferior alveolar nerve canal?", "expected_answer_keywords": ["darkening of roots", "deflection of roots", "interruption of white line"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-011", "discipline": "Prosthodontics", "topic": "Complete Dentures", "question": "Define the posterior palatal seal (post-dam) and explain its anatomical boundaries and clinical function.", "expected_answer_keywords": ["vibrating line", "hamular notch", "retention"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-012", "discipline": "Pediatric Dentistry", "topic": "Pulpotomy", "question": "Compare mineral trioxide aggregate (MTA) and ferric sulfate as pulpotomy medicaments in primary molars.", "expected_answer_keywords": ["dentin bridge", "biocompatible", "internal resorption"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-013", "discipline": "Endodontics", "topic": "Apexification", "question": "What is the clinical protocol and biological rationale for single-visit MTA apexification in an immature permanent tooth with necrotic pulp?", "expected_answer_keywords": ["apical barrier", "open apex", "calcium silicate"], "expected_citation": "p.", "complexity": "high"},
+  {"id": "DENT-014", "discipline": "Oral Medicine", "topic": "Oral Lichen Planus", "question": "Describe Wickham striae and the histopathological triad of oral lichen planus.", "expected_answer_keywords": ["saw-tooth rete", "band-like lymphocytic", "basal cell liquefaction"], "expected_citation": "p.", "complexity": "high"},
+  {"id": "DENT-015", "discipline": "Dental Radiology", "topic": "SLOB Rule", "question": "Explain how the SLOB (Same Lingual Opposite Buccal) rule is applied to localize an impacted maxillary canine.", "expected_answer_keywords": ["tube shift", "lingual", "buccal"], "expected_citation": "p.", "complexity": "low"},
+  {"id": "DENT-016", "discipline": "Cariology", "topic": "Demineralization", "question": "What is the critical pH of hydroxyapatite versus fluorapatite, and how does fluoride inhibit enamel demineralization?", "expected_answer_keywords": ["5.5", "4.5", "fluorapatite", "remineralization"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-017", "discipline": "Oral Anatomy", "topic": "TMJ", "question": "Which muscles attach to the articular disc and condylar neck of the temporomandibular joint, and what are their actions during opening?", "expected_answer_keywords": ["lateral pterygoid", "superior head", "inferior head"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-018", "discipline": "Prosthodontics", "topic": "Ante's Law", "question": "State Ante's Law in fixed partial denture design and discuss its modern evidence-based limitations.", "expected_answer_keywords": ["periodontal ligament area", "abutment", "pontic"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-019", "discipline": "Pharmacology", "topic": "Antibiotic Prophylaxis", "question": "Which cardiac conditions require infective endocarditis antibiotic prophylaxis prior to invasive dental procedures according to AHA guidelines?", "expected_answer_keywords": ["prosthetic valve", "previous endocarditis", "amoxicillin"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-020", "discipline": "Dental Materials", "topic": "Glass Ionomer Cement", "question": "Explain the acid-base setting reaction and chemical adhesion mechanism of conventional glass ionomer cement to tooth structure.", "expected_answer_keywords": ["polyacrylic acid", "fluoroaluminosilicate", "calcium chelation"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-021", "discipline": "Oral Pathology", "topic": "Ameloblastoma", "question": "Describe Vickers-Gorlin criteria in the histopathology of follicular ameloblastoma.", "expected_answer_keywords": ["reverse polarization", "stellate reticulum", "subnuclear vacuolization"], "expected_citation": "p.", "complexity": "high"},
+  {"id": "DENT-022", "discipline": "Periodontology", "topic": "Biologic Width", "question": "What is supracrestal tissue attachment (formerly biologic width), and what are its average histological dimensions?", "expected_answer_keywords": ["junctional epithelium", "connective tissue attachment", "2.04 mm"], "expected_citation": "p.", "complexity": "low"},
+  {"id": "DENT-023", "discipline": "Endodontics", "topic": "Vertucci Classification", "question": "Distinguish between Vertucci Type II and Type IV root canal configurations.", "expected_answer_keywords": ["2-1", "2-2", "apical foramen"], "expected_citation": "p.", "complexity": "low"},
+  {"id": "DENT-024", "discipline": "Orthodontics", "topic": "Cephalometrics", "question": "What do the SNA, SNB, and ANB angles measure in Steiner cephalometric analysis?", "expected_answer_keywords": ["maxilla", "mandible", "skeletal Class"], "expected_citation": "p.", "complexity": "low"},
+  {"id": "DENT-025", "discipline": "Oral Surgery", "topic": "Alveolar Osteitis", "question": "What is the pathophysiology, risk factors, and clinical management of alveolar osteitis (dry socket)?", "expected_answer_keywords": ["fibrinolysis", "clot loss", "eugenol", "smoking"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-026", "discipline": "Operative Dentistry", "topic": "Dentin Bonding", "question": "Compare etch-and-rinse (total-etch) versus self-etch adhesive systems in terms of hybrid layer formation and smear layer handling.", "expected_answer_keywords": ["phosphoric acid", "hybrid layer", "smear layer", "10-MDP"], "expected_citation": "p.", "complexity": "high"},
+  {"id": "DENT-027", "discipline": "Pediatric Dentistry", "topic": "Space Maintainers", "question": "When is a band-and-loop space maintainer indicated versus a distal shoe space maintainer?", "expected_answer_keywords": ["primary first molar", "unerupted first permanent molar", "primary second molar"], "expected_citation": "p.", "complexity": "medium"},
+  {"id": "DENT-028", "discipline": "Oral Medicine", "topic": "MRONJ", "question": "What are the AAOMS diagnostic criteria for medication-related osteonecrosis of the jaw (MRONJ)?", "expected_answer_keywords": ["antiresorptive", "exposed bone", "8 weeks", "no radiation"], "expected_citation": "p.", "complexity": "high"},
+  {"id": "DENT-029", "discipline": "Dental Public Health", "topic": "Fluoridation", "question": "What is the optimal community water fluoridation concentration recommended by the US Public Health Service, and why was it revised?", "expected_answer_keywords": ["0.7 mg/L", "dental fluorosis", "caries prevention"], "expected_citation": "p.", "complexity": "low"},
+  {"id": "DENT-030", "discipline": "Implantology", "topic": "Osseointegration", "question": "Compare primary stability versus secondary stability during dental implant osseointegration.", "expected_answer_keywords": ["mechanical", "biological", "bone remodeling", "ISQ"], "expected_citation": "p.", "complexity": "medium"}
 ]

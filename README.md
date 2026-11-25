@@ -86,6 +86,36 @@ Student Query + Context
 4. **Active-Recall Study Engine:**
    - Board exam MCQs (INBDE, NDEB, BDS) with detailed rationales for correct answers and distractors.
    - High-yield active-recall flashcards persisted in PostgreSQL.
+5. **Adaptive Multi-Extractor Ingestion & Hybrid RAG:**
+   - **Page-Level Triage** (`PyMuPDF` first pass) routes pages to `pymupdf` (text), `docling` (tables, with Marker/Unstructured fallback), `gemini` (200 DPI vision for scans/diagrams), or `mixed`.
+   - **Bi-Encoder + Hybrid Retrieval**: `BAAI/bge-m3` dense (1024-dim HNSW) + sparse BM25 (`content_tsv` GIN `ts_rank_cd`) fused with RRF (`k=60`) and reranked with `BAAI/bge-reranker-v2-m3` to top-5 chunks.
+   - **Async Celery + Redis Queue**: `/api/v1/documents/upload` returns `202 Accepted` immediately with SHA-256 + `user_id` idempotency.
+   - **LangSmith Observability**: Full span tracing from API entry through retrieval steps and LLM calls.
+
+### Ingestion & Retrieval Pipelines
+See [`ARCHITECTURE.md`](ARCHITECTURE.md) for full details.
+
+```
+PDF Upload (202 queued) ─► Page Triage (PyMuPDF) ─┬─► pymupdf (text)
+                                                  ├─► docling (tables -> MD)
+                                                  ├─► gemini (200 DPI vision)
+                                                  └─► mixed (merged in order)
+  ─► Adaptive Chunker ─► BAAI/bge-m3 (dense+sparse) ─► pgvector (HNSW + GIN)
+
+Query ─► bge-m3 ─┬─► Dense Top-50 (pgvector <=>)
+                 └─► Sparse Top-50 (ts_rank_cd)
+                   ─► RRF (k=60, top-20) ─► bge-reranker-v2-m3 ─► Top-5 ─► LLM
+```
+
+### Makefile Targets & Evaluation
+- `make up`: Start Postgres+pgvector, Redis, Celery worker, and FastAPI (`docker-compose up --build -d`).
+- `make migrate`: Run `alembic upgrade head`.
+- `make test`: Run fast unit tests (`pytest -v -m "not slow and not integration"`).
+- `make eval`: Run the 30-item golden dental Q&A evaluation harness (`evaluation/run_eval.py`) measuring faithfulness, citation precision, and answer relevancy.
+- `make ingest FILE=path/to/book.pdf`: Run page-level triage on a local PDF.
+
+### Additional Environment Variables
+See `.env.example` for all tunables (`PYMUPDF_DPI`, `EXTRACTION_CONCURRENCY`, `EMBED_MODEL`, `RERANK_MODEL`, `CELERY_BROKER_URL`, `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT`).
 
 ---
 

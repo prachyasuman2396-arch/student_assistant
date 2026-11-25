@@ -19,6 +19,18 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: dental_assistant_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   backend:
     build:
       context: .
@@ -28,13 +40,40 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:postgrespassword@db:5432/dental_agent_db
       - DATABASE_SYNC_URL=postgresql+psycopg://postgres:postgrespassword@db:5432/dental_agent_db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - ENVIRONMENT=production
       - DEBUG=false
+    env_file:
+      - .env
+    volumes:
+      - ./uploads:/app/uploads
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dental_assistant_celery_worker
+    restart: unless-stopped
+    command: celery -A app.workers.celery_app worker -Q ingestion,dlq --loglevel=info --concurrency=2
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgrespassword@db:5432/dental_agent_db
+      - DATABASE_SYNC_URL=postgresql+psycopg://postgres:postgrespassword@db:5432/dental_agent_db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - ENVIRONMENT=production
     env_file:
       - .env
     volumes:

@@ -1,6 +1,6 @@
 import uuid
 from typing import List, Optional, TYPE_CHECKING
-from sqlalchemy import String, ForeignKey, Integer, BigInteger, Text, Index
+from sqlalchemy import String, ForeignKey, Integer, BigInteger, Text, JSON, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base, TimestampMixin
 
@@ -22,10 +22,13 @@ class Document(Base, TimestampMixin):
     file_path: Mapped[str] = mapped_column(String(1024), nullable=False)
     file_size_bytes: Mapped[int] = mapped_column(BigInteger, default=0, nullable=False)
     page_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    chunk_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     status: Mapped[str] = mapped_column(
         String(50), default="pending", nullable=False
-    )  # pending, processing, completed, failed
+    )  # queued, pending, processing, ready, completed, failed
     error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    last_error: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    triage_summary: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
 
     # Ingestion provenance and deduplication metadata
     content_hash: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)

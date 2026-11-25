@@ -70,6 +70,42 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL_NAME: str = "BAAI/bge-small-en-v1.5"
     EMBEDDING_DIMENSION: int = 384
 
+    # Multi-Extractor & Hybrid RAG Settings
+    PYMUPDF_DPI: int = 200
+    TRIAGE_SCANNED_WORD_FLOOR: int = 50
+    TRIAGE_SCANNED_WORD_RATIO: float = 0.15
+    TRIAGE_SCANNED_IMAGE_COVERAGE_PCT: float = 60.0
+    EXTRACTION_CONCURRENCY: int = 3
+    EXTRACTION_THREAD_POOL_SIZE: int = 4
+    EMBED_MODEL: str = "BAAI/bge-m3"
+    EMBED_DIMENSION: int = 1024
+    EMBED_BATCH_SIZE: int = 16
+    EMBED_USE_ONNX: bool = True
+    RERANK_MODEL: str = "BAAI/bge-reranker-v2-m3"
+    RETRIEVAL_DENSE_TOPK: int = 50
+    RETRIEVAL_SPARSE_TOPK: int = 50
+    RRF_K: int = 60
+    RRF_FUSED_TOPK: int = 20
+    FINAL_TOPK: int = 5
+    GEMINI_VISION_MODEL: str = "gemini-1.5-pro"
+    GEMINI_VISION_MAX_RETRIES: int = 2
+    TABLE_EXTRACTOR: str = "docling"  # docling | marker | unstructured
+
+    # Async Ingestion & Object Storage (Celery / Redis / S3)
+    CELERY_BROKER_URL: str = "redis://redis:6379/0"
+    CELERY_RESULT_BACKEND: str = "redis://redis:6379/0"
+    S3_ENDPOINT_URL: str = ""
+    S3_BUCKET: str = ""
+    S3_ACCESS_KEY: str = ""
+    S3_SECRET_KEY: str = ""
+    USE_ASYNC_INGESTION: bool = True
+
+    # LangSmith Observability
+    LANGSMITH_TRACING: bool = True
+    LANGSMITH_API_KEY: str = ""
+    LANGSMITH_PROJECT: str = "student_assistant"
+    LANGSMITH_ENDPOINT: str = "https://api.smith.langchain.com"
+
     # Document RAG Settings
     CHUNK_SIZE: int = 800
     CHUNK_OVERLAP: int = 150

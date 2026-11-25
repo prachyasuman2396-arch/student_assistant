@@ -18,6 +18,7 @@ from app.db.models.user import User
 from app.llm.router import LLMRouter
 from app.llm.schemas import TaskType, ComplexityLevel, LLMMessage
 from app.research.service import ResearchService
+from app.rag.retriever import HybridRAGRetriever
 from app.rag.hybrid import HybridRetriever
 from app.rag.vector_store import PgVectorRetriever
 from app.prompts.tutor import DENTAL_TUTOR_SYSTEM_PROMPT
@@ -83,7 +84,7 @@ async def chat_endpoint(
     # 4. Construct tools & nodes
     router_instance = LLMRouter()
     research_svc = ResearchService()
-    retriever_factory = lambda: HybridRetriever(session=session)
+    retriever_factory = lambda: HybridRAGRetriever(session=session)
     profile_repo_factory = lambda: ProfileRepository(session)
     memory_repo_factory = lambda: MemoryRepository(session)
     episodic_repo_factory = lambda: EpisodicRepository(session)

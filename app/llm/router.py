@@ -13,6 +13,7 @@ from app.llm.groq_client import GroqClient
 from app.llm.gemini_client import GeminiClient
 from app.core.config import settings
 from app.core.logging import logger
+from app.core.observability import traceable
 
 
 class LLMRouter:
@@ -167,6 +168,7 @@ class LLMRouter:
         else:
             raise RuntimeError("No healthy LLM provider is currently available.")
 
+    @traceable(name="llm_router_execute", run_type="llm")
     async def execute_with_fallback(
         self,
         task_type: TaskType,

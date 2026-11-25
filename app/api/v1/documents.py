@@ -1,12 +1,12 @@
 import os
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
 from app.db.repositories.document_repo import DocumentRepository
-from app.documents.service import DocumentService
+from app.documents.ingestion_service import IngestionService
 from app.api.dependencies import get_current_user
 from app.db.models.user import User
 
@@ -18,25 +18,31 @@ class DocumentResponse(BaseModel):
     filename: str
     file_size_bytes: int
     page_count: int
+    chunk_count: int = 0
     status: str
+    triage_summary: Optional[Dict[str, int]] = None
+    last_error: Optional[Dict[str, Any]] = None
     error_message: Optional[str] = None
     created_at: datetime
 
 
-@router.post("/upload", response_model=DocumentResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/upload", response_model=DocumentResponse, status_code=status.HTTP_202_ACCEPTED)
 async def upload_document(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
-    service = DocumentService(session)
-    doc = await service.ingest_pdf(file=file, user_id=current_user.id)
+    service = IngestionService(session)
+    doc = await service.enqueue_upload(file=file, user_id=current_user.id)
     return DocumentResponse(
         id=doc.id,
         filename=doc.filename,
         file_size_bytes=doc.file_size_bytes,
         page_count=doc.page_count,
+        chunk_count=getattr(doc, "chunk_count", 0) or 0,
         status=doc.status,
+        triage_summary=getattr(doc, "triage_summary", None),
+        last_error=getattr(doc, "last_error", None),
         error_message=doc.error_message,
         created_at=doc.created_at,
     )
@@ -57,7 +63,10 @@ async def list_documents(
             filename=d.filename,
             file_size_bytes=d.file_size_bytes,
             page_count=d.page_count,
+            chunk_count=getattr(d, "chunk_count", 0) or 0,
             status=d.status,
+            triage_summary=getattr(d, "triage_summary", None),
+            last_error=getattr(d, "last_error", None),
             error_message=d.error_message,
             created_at=d.created_at,
         )
@@ -81,7 +90,10 @@ async def get_document(
         filename=doc.filename,
         file_size_bytes=doc.file_size_bytes,
         page_count=doc.page_count,
+        chunk_count=getattr(doc, "chunk_count", 0) or 0,
         status=doc.status,
+        triage_summary=getattr(doc, "triage_summary", None),
+        last_error=getattr(doc, "last_error", None),
         error_message=doc.error_message,
         created_at=doc.created_at,
     )
